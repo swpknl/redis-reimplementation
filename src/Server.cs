@@ -14,7 +14,8 @@ var data = socket.Receive(bytes);
 var request = Encoding.UTF8.GetString(bytes).Split("\r\n");
 int count = request.Length;
 int index = 0;
-while (socket.Connected && ++index < count)
+while (++index < count && socket.Connected)
 {
+    Console.WriteLine(index);
     socket.Send(Encoding.UTF8.GetBytes("+PONG\r\n"));    
 }
