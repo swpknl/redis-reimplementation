@@ -13,11 +13,9 @@ var bytes = new byte[1024];
 var data = socket.Receive(bytes);
 var value = Encoding.UTF8.GetString(bytes);
 Console.Write(value);
-var request = value.Split("PING");
-int count = request.Length;
-int index = 0;
-while (++index < count)
+while (socket.Connected)
 {
-    Console.WriteLine(index);
-    socket.Send(Encoding.UTF8.GetBytes("+PONG\r\n"));    
+    var requestData = new byte[1024];
+    socket.Receive(bytes);
+    socket.Send(Encoding.UTF8.GetBytes("+PONG\r\n"));
 }
