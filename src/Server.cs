@@ -8,7 +8,11 @@ Console.WriteLine("Logs from your program will appear here!");
 // Uncomment this block to pass the first stage
 TcpListener server = new TcpListener(IPAddress.Any, 6379);
 server.Start();
-server.BeginAcceptSocket(ac => SendReply(ac), server); // wait for client
+while (true)
+{
+    server.BeginAcceptSocket(ac => SendReply(ac), server); // wait for client    
+}
+
 
 void SendReply(IAsyncResult ar)
 {
