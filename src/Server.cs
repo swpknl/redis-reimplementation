@@ -10,9 +10,6 @@ TcpListener server = new TcpListener(IPAddress.Any, 6379);
 server.Start();
 var socket = server.AcceptSocket(); // wait for client
 var bytes = new byte[1024];
-var data = socket.Receive(bytes);
-var value = Encoding.UTF8.GetString(bytes);
-Console.Write(value);
 while (socket.Connected)
 {
     var requestData = new byte[1024];
