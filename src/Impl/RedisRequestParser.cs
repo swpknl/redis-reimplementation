@@ -6,11 +6,28 @@ public class RedisRequestParser : IRedisRequestParser
 {
     public RedisResponse Parse(string request)
     {
-        return new RedisResponse("+PONG\r\n");
+        var requestType = GetRequestType(request);
+        switch (requestType)        
+        {
+            case RedisRequestType.PING:
+                return new RedisResponse("+PONG\r\n");
+            case RedisRequestType.ECHO:
+                return new RedisResponse("+PONG\r\n");
+            default:
+                return new RedisResponse("+PONG\r\n");
+        }
     }
 
     private RedisRequestType GetRequestType(string request)
     {
-        return RedisRequestType.PING;
+        if (request.Contains("PING"))
+        {
+            return RedisRequestType.PING;
+        }
+        else
+        {
+            return RedisRequestType.ECHO;
+        }
+        
     }
 }
