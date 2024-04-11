@@ -12,8 +12,8 @@ var socket = server.AcceptSocket(); // wait for client
 var bytes = new byte[1024];
 var data = socket.Receive(bytes);
 var value = Encoding.UTF8.GetString(bytes);
-Console.WriteLine(value);
-var request = value.Split("\r\n");
+Console.Write(value);
+var request = value.Split("PING");
 int count = request.Length;
 int index = 0;
 while (++index < count)
