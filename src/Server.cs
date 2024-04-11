@@ -11,8 +11,10 @@ server.Start();
 var socket = server.AcceptSocket(); // wait for client
 var bytes = new byte[1024];
 var data = socket.Receive(bytes);
-Console.WriteLine(Encoding.UTF8.GetString(bytes));
-while (socket.Connected)
+var request = Encoding.UTF8.GetString(bytes).Split("\r\n");
+int count = request.Length;
+int index = 0;
+while (socket.Connected && ++index < count)
 {
     socket.Send(Encoding.UTF8.GetBytes("+PONG\r\n"));    
 }
