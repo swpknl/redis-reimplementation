@@ -15,7 +15,15 @@ public static class RedisCache
         var isPresent = map.TryGetValue(key, out RedisCacheValue value);
         if (isPresent)
         {
-            return new KeyResponse(value.Key);    
+            if (value.ExpiryDateTime < DateTime.Now)
+            {
+                return new KeyResponse(value.Key);    
+            }
+            else
+            {
+                return new NullResponse();
+            }
+                
         }
         else
         {
@@ -27,9 +35,21 @@ public static class RedisCache
     {
         Console.WriteLine(request);
         var array = request.Split("\r\n");
-        var key = array[array.Length - 4];
-        var value = array[array.Length - 2];
-        map.TryAdd(key, new RedisCacheValue(value, DateTime.Now));
+        if (request.Contains("px"))
+        {
+            var key = array[array.Length - 6];
+            var value = array[array.Length - 4];
+            var timeout = double.Parse(array[array.Length - 2]);
+            var datetime = DateTime.Now.AddMilliseconds(timeout);
+            map.TryAdd(key, new RedisCacheValue(value, datetime));
+        }
+        else
+        {
+            var key = array[array.Length - 4];
+            var value = array[array.Length - 2];
+            map.TryAdd(key, new RedisCacheValue(value, DateTime.Now.AddYears(1)));    
+        }
+        
         return new OkResponse();
     }
 }
