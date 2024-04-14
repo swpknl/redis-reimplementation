@@ -7,7 +7,7 @@ public class RequestTypeFactory : IRequestTypeFactory
 {
     public RequestType GetRequestType(string request)
     {
-        if (request.Contains("PING"))
+        if (request.ToLower().Contains("ping"))
         {
             return RequestType.PING;
         }

@@ -8,13 +8,14 @@ namespace codecrafters_redis;
 public class RedisServer : IRedisServer
 {
     private TcpListener server;
+
     public void Start()
     {
         this.server = new TcpListener(IPAddress.Any, 6379);
         this.server.Start();
         while (true)
         {
-            server.BeginAcceptSocket(asyncResult => Process(asyncResult), null);    
+            server.BeginAcceptSocket(asyncResult => Process(asyncResult), null);
         }
     }
 
@@ -27,11 +28,8 @@ public class RedisServer : IRedisServer
             socket.Receive(bytes);
             var request = Encoding.UTF8.GetString(bytes);
             var redisRequestParser = new RequestParser();
-            if (socket.Connected)
-            {
-                var response = redisRequestParser.Parse(request);
-                socket.Send(response.GetByteResponse());
-            }
+            var response = redisRequestParser.Parse(request);
+            socket.Send(response.GetByteResponse());
         }
     }
 
