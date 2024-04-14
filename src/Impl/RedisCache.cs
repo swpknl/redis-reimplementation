@@ -34,12 +34,14 @@ public static class RedisCache
     public static IResponse XAdd(string request)
     {
         var array = request.Split("\r\n");
-        foreach (var element in array) 
+        string key = array[4];
+        string id = array[6];
+        var dict= new Dictionary<string, string>()
         {
-            Console.WriteLine(element);
-        }
-        
-        return new NullResponse();
+            { array[8], array[10] }
+        };
+        map.TryAdd(key, new RedisCacheValue(new StreamValue(id, dict), DateTime.Now.AddYears(1)));
+        return new KeyResponse(id);
     }
 
     public static IResponse Type(string request)
