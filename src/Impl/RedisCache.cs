@@ -12,7 +12,9 @@ public static class RedisCache
     {
         var array = request.Split("\r\n");
         var key = array[array.Length - 2];
+        Console.WriteLine(key);
         var isPresent = map.TryGetValue(key, out RedisCacheValue value);
+        Console.WriteLine(isPresent);
         if (isPresent)
         {
             if (value.ExpiryDateTime < DateTime.Now)
