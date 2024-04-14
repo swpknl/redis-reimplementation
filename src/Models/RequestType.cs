@@ -6,5 +6,6 @@ public enum RequestType
     ECHO,
     GET,
     SET,
-    NULL
+    NULL,
+    TYPE
 }

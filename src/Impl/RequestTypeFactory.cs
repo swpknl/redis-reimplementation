@@ -24,6 +24,10 @@ public class RequestTypeFactory : IRequestTypeFactory
         {
             return RequestType.ECHO;
         }
+        else if (request.Contains("type"))
+        {
+            return RequestType.TYPE;
+        }
         else
         {
             return RequestType.NULL;

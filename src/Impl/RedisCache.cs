@@ -30,6 +30,22 @@ public static class RedisCache
         }
     }
 
+    public static IResponse Type(string request)
+    {
+        var array = request.Split("\r\n");
+        var key = array[array.Length - 2];
+        var isPresent = map.TryGetValue(key, out RedisCacheValue value);
+        if (isPresent)
+        {
+            return new TypeResponse("string");
+        }
+        else
+        {
+            return new TypeResponse("none");
+        }
+        
+    }
+    
     public static IResponse Set(string request)
     {
         var array = request.Split("\r\n");
