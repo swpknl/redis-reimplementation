@@ -1,6 +1,6 @@
 namespace codecrafters_redis.Models;
 
-public enum RedisRequestType
+public enum RequestType
 {
     PING,
     ECHO

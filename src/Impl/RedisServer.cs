@@ -26,10 +26,11 @@ public class RedisServer : IRedisServer
             var bytes = new byte[1024];
             socket.Receive(bytes);
             var request = Encoding.UTF8.GetString(bytes);
-            var redisRequestParser = new RedisRequestParser();
+            var redisRequestParser = new RequestParser();
             if (socket.Connected)
             {
-                socket.Send(redisRequestParser.Parse(request).GetByteResponse());   
+                var response = redisRequestParser.Parse(request);
+                socket.Send(response.GetByteResponse());
             }
         }
     }

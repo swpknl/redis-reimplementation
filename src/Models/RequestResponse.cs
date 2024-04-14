@@ -2,12 +2,12 @@ using System.Text;
 
 namespace codecrafters_redis.Models;
 
-public class RedisResponse
+public class RequestResponse
 {
     public string Response { get; set; }
     public byte[] ByteResponse { get; set; }
     
-    public RedisResponse(string response)
+    public RequestResponse(string response)
     {
         this.Response = response;
     }
