@@ -17,7 +17,7 @@ public static class RedisCache
         Console.WriteLine(isPresent);
         if (isPresent)
         {
-            if (value.ExpiryDateTime > DateTime.Now)
+            if (value.ExpiryDateTime >= DateTime.Now)
             {
                 return new KeyResponse(value.Value);    
             }
