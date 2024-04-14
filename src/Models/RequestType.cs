@@ -7,5 +7,6 @@ public enum RequestType
     GET,
     SET,
     NULL,
-    TYPE
+    TYPE,
+    XADD
 }

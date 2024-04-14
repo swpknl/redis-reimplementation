@@ -2,12 +2,12 @@ namespace codecrafters_redis.Models;
 
 public class RedisCacheValue
 {
-    public string Value { get; set; }
+    public BaseValue Value { get; set; }
     public DateTime ExpiryDateTime { get; set; }
 
-    public RedisCacheValue(string key, DateTime expiryDateTime)
+    public RedisCacheValue(BaseValue value, DateTime expiryDateTime)
     {
-        this.Value = key;
+        this.Value = value;
         this.ExpiryDateTime = expiryDateTime;
     }
 }

@@ -26,6 +26,8 @@ public class ResponseFactory : IResponseFactory
                 return RedisCache.Set(request);
             case RequestType.TYPE:
                 return RedisCache.Type(request);
+            case RequestType.XADD:
+                return RedisCache.XAdd(request);
             default:
                 return new NullResponse();
         }

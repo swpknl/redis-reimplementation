@@ -28,6 +28,10 @@ public class RequestTypeFactory : IRequestTypeFactory
         {
             return RequestType.TYPE;
         }
+        else if (request.Contains("xadd"))
+        {
+            return RequestType.XADD;
+        }
         else
         {
             return RequestType.NULL;

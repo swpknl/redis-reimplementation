@@ -17,7 +17,8 @@ public static class RedisCache
         {
             if (value.ExpiryDateTime >= DateTime.Now)
             {
-                return new KeyResponse(value.Value);    
+                var keyValue = (value.Value as StringValue).Value;
+                return new KeyResponse(keyValue);    
             }
             else
             {
@@ -29,6 +30,17 @@ public static class RedisCache
             return new NullResponse();
         }
     }
+    
+    public static IResponse XAdd(string request)
+    {
+        var array = request.Split("\r\n");
+        foreach (var element in array) 
+        {
+            Console.WriteLine(element);
+        }
+        
+        return new NullResponse();
+    }
 
     public static IResponse Type(string request)
     {
@@ -37,7 +49,7 @@ public static class RedisCache
         var isPresent = map.TryGetValue(key, out RedisCacheValue value);
         if (isPresent)
         {
-            return new TypeResponse("string");
+            return new TypeResponse(value.Value.ValueType);
         }
         else
         {
@@ -55,13 +67,13 @@ public static class RedisCache
             var value = array[array.Length - 6];
             var timeout = double.Parse(array[array.Length - 2]);
             var datetime = DateTime.Now.AddMilliseconds(timeout);
-            map.TryAdd(key, new RedisCacheValue(value, datetime));
+            map.TryAdd(key, new RedisCacheValue(new StringValue(value), datetime));
         }
         else
         {
             var key = array[array.Length - 4];
             var value = array[array.Length - 2];
-            map.TryAdd(key, new RedisCacheValue(value, DateTime.Now.AddYears(1)));    
+            map.TryAdd(key, new RedisCacheValue(new StringValue(value), DateTime.Now.AddYears(1)));    
         }
         
         return new OkResponse();
