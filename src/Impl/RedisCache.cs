@@ -26,6 +26,7 @@ public static class RedisCache
     public static IResponse Set(string request)
     {
         var array = request.Split("\r\n");
+        Console.WriteLine(array);
         if (request.ToLower().Contains("px"))
         {
             var key = array[array.Length - 6];
