@@ -35,7 +35,6 @@ public static class RedisCache
 
     public static IResponse Set(string request)
     {
-        Console.WriteLine(request);
         var array = request.Split("\r\n");
         if (request.ToLower().Contains("px"))
         {
@@ -53,9 +52,7 @@ public static class RedisCache
         else
         {
             var key = array[array.Length - 4];
-            Console.WriteLine(key);
             var value = array[array.Length - 2];
-            Console.WriteLine(value);
             map.TryAdd(key, new RedisCacheValue(value, DateTime.Now.AddYears(1)));    
         }
         
