@@ -17,7 +17,7 @@ public static class RedisCache
         {
             if (value.ExpiryDateTime < DateTime.Now)
             {
-                return new KeyResponse(value.Key);    
+                return new KeyResponse(value.Value);    
             }
             else
             {
