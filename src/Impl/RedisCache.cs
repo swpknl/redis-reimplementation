@@ -80,7 +80,7 @@ public static class RedisCache
     private static bool CheckTopItem(KeyValuePair<int, int> splitId, Dictionary<int, int> dict)
     {
         var top = dict.First();
-        return (splitId.Key <= top.Key && splitId.Value == top.Value);
+        return (splitId.Key <= top.Key && splitId.Value == top.Value); 
     }
 
     public static IResponse Type(string request)
