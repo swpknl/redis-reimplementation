@@ -67,7 +67,7 @@ public static class RedisCache
             message = "-ERR The ID specified in XADD must be greater than 0-0\r\n";
             return false;
         }
-        else if (dict.ContainsKey(splitId.Key))
+        else if (CheckTopItem(splitId, dict))
         {
             message = "-ERR The ID specified in XADD is equal or smaller than the target stream top item\r\n";
             return false;
@@ -75,6 +75,12 @@ public static class RedisCache
 
         message = string.Empty;
         return true;
+    }
+
+    private static bool CheckTopItem(KeyValuePair<int, int> splitId, Dictionary<int, int> dict)
+    {
+        var top = dict.First();
+        return (splitId.Key <= top.Key && splitId.Value == top.Value);
     }
 
     public static IResponse Type(string request)
