@@ -9,10 +9,10 @@ public static class RedisCache
     private static ConcurrentDictionary<string, string> map = new(); 
     public static IResponse Get(string request)
     {
-        Console.WriteLine(request);
         var array = request.Split("\r\n");
         var key = array[array.Length - 2];
-        return new KeyResponse(key);
+        map.TryGetValue(key, out string value);
+        return new KeyResponse(value);
     }
 
     public static IResponse Set(string request)
