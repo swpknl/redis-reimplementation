@@ -40,8 +40,41 @@ public static class RedisCache
         {
             { array[8], array[10] }
         };
-        map.TryAdd(key, new RedisCacheValue(new StreamValue(id, dict), DateTime.Now.AddYears(1)));
-        return new KeyResponse(id);
+        if (IsIdValid(id, out string errorMessage))
+        {
+            map.TryAdd(key, new RedisCacheValue(new StreamValue(id, dict), DateTime.Now.AddYears(1)));
+            return new KeyResponse(id);    
+        }
+        else
+        {
+            return new ErrorResponse(errorMessage);
+        }
+    }
+
+    private static bool IsIdValid(string id, out string message)
+    {
+        var split = id.Split("-");
+        var splitId = new KeyValuePair<int, int>(int.Parse(split[0]), int.Parse(split[1]));
+        var ids = map.Values.OrderByDescending(x => x.ExpiryDateTime).Where(x => x.Value.ValueType == "stream").Select(
+            x =>
+            {
+                var arr = (x.Value as StreamValue).Id.Split("-");
+                return new KeyValuePair<int, int>(int.Parse(arr[0]), int.Parse(arr[1]));
+            });
+        var dict = new Dictionary<int, int>(ids);
+        if (splitId.Key < 1 && splitId.Value < 1)
+        {
+            message = "-ERR The ID specified in XADD must be greater than 0-0\r\n";
+            return false;
+        }
+        else if (dict.ContainsKey(splitId.Key))
+        {
+            message = "-ERR The ID specified in XADD is equal or smaller than the target stream top item\r\n";
+            return false;
+        }
+
+        message = string.Empty;
+        return true;
     }
 
     public static IResponse Type(string request)
