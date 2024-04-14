@@ -7,13 +7,26 @@ public class RequestTypeFactory : IRequestTypeFactory
 {
     public RequestType GetRequestType(string request)
     {
-        if (request.ToLower().Contains("ping"))
+        request = request.ToLower();
+        if (request.Contains("ping"))
         {
             return RequestType.PING;
         }
-        else
+        else if (request.Contains("get"))
+        {
+            return RequestType.GET;
+        }
+        else if (request.Contains("set"))
+        {
+            return RequestType.SET;
+        }
+        else if(request.Contains("echo"))
         {
             return RequestType.ECHO;
+        }
+        else
+        {
+            return RequestType.NULL;
         }
     }
 }

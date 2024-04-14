@@ -20,8 +20,12 @@ public class ResponseFactory : IResponseFactory
                 return new EchoResponse(request);
             case RequestType.PING:
                 return new PongResponse();
+            case RequestType.GET:
+                return RedisCache.Get(request);
+            case RequestType.SET:
+                return RedisCache.Set(request);
             default:
-                return new PongResponse();
+                return new NullResponse();
         }
     }
 }

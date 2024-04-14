@@ -9,32 +9,33 @@ public class RedisServer : IRedisServer
 {
     private TcpListener server;
 
-    public void Start()
+    public async Task Start()
     {
         this.server = new TcpListener(IPAddress.Any, 6379);
         this.server.Start();
         while (true)
         {
-            server.BeginAcceptSocket(asyncResult => Process(asyncResult), null);
+            var socket = await server.AcceptSocketAsync();
+            await Process(socket);
         }
     }
 
-    public void Process(IAsyncResult asyncResult)
+    public async Task Process(Socket socket)
     {
-        var socket = this.server.EndAcceptSocket(asyncResult);
         while (socket.Connected)
         {
-            var bytes = new byte[1024];
-            socket.Receive(bytes);
+            var bytes = new ArraySegment<byte>();
+            await socket.ReceiveAsync(bytes, SocketFlags.None);
             var request = Encoding.UTF8.GetString(bytes);
             var redisRequestParser = new RequestParser();
             var response = redisRequestParser.Parse(request);
-            socket.Send(response.GetByteResponse());
+            await socket.SendAsync(response.GetByteResponse(), SocketFlags.None);
         }
     }
 
-    public void Stop()
+    public Task Stop()
     {
         this.server.Stop();
+        return Task.CompletedTask;
     }
 }

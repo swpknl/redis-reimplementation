@@ -1,8 +1,10 @@
+using System.Net.Sockets;
+
 namespace codecrafters_redis.Contract;
 
 public interface IRedisServer
 {
-    void Start();
-    void Process(IAsyncResult asyncResult);
-    void Stop();
+    Task Start();
+    Task Process(Socket socket);
+    Task Stop();
 }
