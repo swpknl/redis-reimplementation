@@ -24,7 +24,8 @@ public class RedisServer : IRedisServer
     {
         while (socket.Connected)
         {
-            var bytes = new ArraySegment<byte>();
+            var array = new byte[10000];
+            var bytes = new ArraySegment<byte>(array);
             await socket.ReceiveAsync(bytes, SocketFlags.None);
             var request = Encoding.UTF8.GetString(bytes);
             var redisRequestParser = new RequestParser();
