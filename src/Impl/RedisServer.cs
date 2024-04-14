@@ -15,7 +15,7 @@ public class RedisServer : IRedisServer
         this.server.Start();
         while (true)
         {
-            var socket = await server.AcceptSocketAsync();
+            var socket = await server.AcceptSocketAsync().ConfigureAwait(true);
             await Process(socket);
         }
     }
