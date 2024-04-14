@@ -39,10 +39,15 @@ public static class RedisCache
         var array = request.Split("\r\n");
         if (request.ToLower().Contains("px"))
         {
+            Console.WriteLine("in Px");
             var key = array[array.Length - 6];
+            Console.WriteLine(key);
             var value = array[array.Length - 4];
+            Console.WriteLine(value);
             var timeout = double.Parse(array[array.Length - 2]);
+            Console.WriteLine(timeout);
             var datetime = DateTime.Now.AddMilliseconds(timeout);
+            
             map.TryAdd(key, new RedisCacheValue(value, datetime));
         }
         else
