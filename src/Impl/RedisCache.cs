@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
+using System.Security;
 using codecrafters_redis.Contract;
 using codecrafters_redis.Models;
 
@@ -13,6 +14,7 @@ public static class RedisCache
     private static int idKey = 0;
     private static int idValue = 0;
     private static int latestIdSegment = 0;
+    private static long lastIdUnix = 0;
 
     public static IResponse Get(string request)
     {
@@ -63,20 +65,41 @@ public static class RedisCache
 
     private static string GetId(string id)
     {
-        var idKey = int.Parse(id.Split("-")[0]);
-        if (idKey == 0 && latestIdSegment == 0)
+        if (id == "*")
         {
-            return "0-1";
+            Console.WriteLine("In craete new timestamp");
+            var idKeyUnix = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            if (idKeyUnix == lastIdUnix)
+            {
+                idKeyUnix++;
+            }
+
+            var value = $"{idKeyUnix}-{latestIdSegment++}";
+            lastIdUnix = idKeyUnix;
+            return value;
         }
         else
         {
-            return $"{idKey}-{latestIdSegment++}";
+            var idKey = int.Parse(id.Split("-")[0]);
+            if (idKey == 0 && latestIdSegment == 0)
+            {
+                return "0-1";
+            }
+            else
+            {
+                return $"{idKey}-{latestIdSegment++}";
+            }
         }
-
     }
 
     private static bool IsIdValid(string id, out string message)
     {
+        if (id.Length > 10)
+        {
+            message = "";
+            return true;
+        }
+
         var split = id.Split("-");
         var splitId = new KeyValuePair<int, int>(int.Parse(split[0]), int.Parse(split[1]));
         if (id == "0-0")
@@ -87,9 +110,6 @@ public static class RedisCache
         
         if (idMap.Contains(id) || (idKey != 0 && idValue != 0 && ((splitId.Key == idKey && splitId.Value <= idValue) || (splitId.Key < idKey && splitId.Value > idValue))))
         {
-            Console.WriteLine(id);
-            Console.WriteLine(idKey);
-            Console.WriteLine(idValue);
             message = "-ERR The ID specified in XADD is equal or smaller than the target stream top item\r\n";
             return false;
         }
