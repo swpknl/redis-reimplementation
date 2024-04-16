@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Dynamic;
 using System.Runtime.CompilerServices;
 using codecrafters_redis.Contract;
 using codecrafters_redis.Models;
@@ -9,8 +10,9 @@ public static class RedisCache
 {
     private static SortedDictionary<string, RedisCacheValue> map = new();
     private static HashSet<string> idMap = new();
-    private static int idKey = -1;
-    private static int idValue = -1;
+    private static int idKey = 0;
+    private static int idValue = 0;
+    private static int latestIdSegment = 0;
 
     public static IResponse Get(string request)
     {
@@ -40,6 +42,10 @@ public static class RedisCache
         var array = request.Split("\r\n");
         string key = array[4];
         string id = array[6];
+        if (id.Contains("*"))
+        {
+            id = GetId(id);
+        }
         var dict = new Dictionary<string, string>()
         {
             { array[8], array[10] }
@@ -55,6 +61,20 @@ public static class RedisCache
         }
     }
 
+    private static string GetId(string id)
+    {
+        var idKey = int.Parse(id.Split("-")[0]);
+        if (idKey == 0 && latestIdSegment == 0)
+        {
+            return "0-1";
+        }
+        else
+        {
+            return $"{idKey}-{latestIdSegment++}";
+        }
+
+    }
+
     private static bool IsIdValid(string id, out string message)
     {
         var split = id.Split("-");
@@ -65,7 +85,7 @@ public static class RedisCache
             return false;
         }
         
-        if (idMap.Contains(id) || (idKey != -1 && idValue != -1 && ((splitId.Key == idKey && splitId.Value <= idValue) || (splitId.Key < idKey && splitId.Value > idValue))))
+        if (idMap.Contains(id) || (idKey != 0 && idValue != 0 && ((splitId.Key == idKey && splitId.Value <= idValue) || (splitId.Key < idKey && splitId.Value > idValue))))
         {
             Console.WriteLine(id);
             Console.WriteLine(idKey);
